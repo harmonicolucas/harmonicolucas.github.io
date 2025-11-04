@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Projectos Técnicos — Harmónico Augusto</title>
+  <meta name="description" content="Colecção de projectos técnicos, sistemas e investigação de Harmónico Augusto.">
+  <meta name="theme-color" content="#d9dadd">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>
+    (function () {
+      var theme = localStorage.getItem("theme");
+      if (theme !== "light" && theme !== "dark") {
+        theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.dataset.theme = theme;
+      var color = document.querySelector('meta[name="theme-color"]');
+      if (color) color.setAttribute("content", theme === "dark" ? "#121316" : "#d9dadd");
+    })();
+  </script>
+</head>
+<body data-page="projects">
+  <a class="skip" href="#tecnicos">Saltar para o conteúdo</a>
+  <svg class="bg-lines" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <circle cx="1180" cy="180" r="280"></circle>
+    <circle cx="200" cy="640" r="240"></circle>
+  </svg>
+
+  <div class="nav-wrap">
+    <nav class="nav-bar" aria-label="Principal">
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true">H</span>
+        <span>HARMÓNICO</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="#tecnicos" data-i18n="nav.technical">Técnicos</a>
+        <a href="#digitais" data-i18n="nav.digital">Digitais</a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="lang-toggle" type="button">EN</button>
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Alternar tema">
+          <svg class="theme-icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"></path></svg>
+          <svg class="theme-icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+        </button>
+        <button class="icon-btn menu-btn" id="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-links">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        </button>
+        <a class="hire" href="index.html#contacto"><span data-i18n="nav.hire">Contrate-me</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <main>
+    <header class="page-hero" id="tecnicos">
+      <p class="kicker" data-i18n="archive.kicker">Arquivo</p>
+      <h1 data-i18n="archive.title">Projectos Técnicos</h1>
+      <p class="lead" data-i18n="archive.lead">Uma colecção completa do meu trabalho técnico, sistemas e investigação.</p>
+      <div class="project-list" id="tech-list"></div>
+    </header>
+
+    <section class="section" id="digitais">
+      <p class="kicker" data-i18n="digital.kicker">Projectos digitais</p>
+      <h2 data-i18n="digital.title">Para Além do Código</h2>
+      <p class="lead" data-i18n="digital.lead">Projectos criativos, visuais e digitais desenvolvidos a par do meu trabalho técnico.</p>
+      <div class="project-list" id="digital-list"></div>
+    </section>
+
+    <section class="cta-band">
+      <div>
+        <p class="kicker" data-i18n="cta.kicker">Tem um projecto em mente?</p>
+        <h2 data-i18n="cta.title">Vamos construir algo útil.</h2>
+      </div>
+      <a class="hire" href="index.html#contacto" data-i18n="nav.hire">Contrate-me</a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p data-i18n="footer.role">Engenheiro e cientista da computação · Maputo, Moçambique</p>
+      <nav aria-label="Rodapé">
+        <a href="https://www.linkedin.com/in/harmonicolucas/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="projectos.html" data-i18n="footer.projects">Projectos</a>
+        <a href="index.html#contacto" data-i18n="footer.contact">Contacto</a>
+        <button type="button" data-lang-set="pt" aria-pressed="true">Português</button>
+        <button type="button" data-lang-set="en" aria-pressed="false">English</button>
+      </nav>
+    </div>
+    <p class="rights" data-i18n="footer.rights">© 2026 Harmónico Augusto. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="js/content.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
