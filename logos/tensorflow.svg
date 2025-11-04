@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="TF">
+  <rect width="128" height="128" rx="24" fill="#FF6F00"/>
+  <polygon points="64,18 104,40 104,88 64,110 24,88 24,40" fill="none" stroke="#FFFFFF" stroke-width="6"/>
+  <text x="64" y="76" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="700" fill="#FFFFFF">TF</text>
+</svg>
