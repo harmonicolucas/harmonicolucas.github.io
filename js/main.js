@@ -49,9 +49,10 @@ function setLanguage(lang) {
 function setTheme(theme) {
   state.theme = theme === "dark" ? "dark" : "light";
   document.documentElement.dataset.theme = state.theme;
+  document.documentElement.classList.toggle("dark", state.theme === "dark");
   localStorage.setItem("theme", state.theme);
   const color = document.querySelector('meta[name="theme-color"]');
-  if (color) color.setAttribute("content", state.theme === "dark" ? "#121316" : "#d9dadd");
+  if (color) color.setAttribute("content", state.theme === "dark" ? "#0f1115" : "#d9dadd");
 }
 
 function chipList(items) {
@@ -59,18 +60,29 @@ function chipList(items) {
 }
 
 function renderChips() {
-  const one = document.getElementById("chips-one");
-  const two = document.getElementById("chips-two");
-  if (one) one.innerHTML = chipList(t("skills.one.items"));
-  if (two) two.innerHTML = chipList(t("skills.two.items"));
+  const paint = (id, key) => {
+    const node = document.getElementById(id);
+    if (!node) return;
+    node.innerHTML = `<div class="skill-items">${t(key).map((item) => `<span class="skill-item">${item}</span>`).join("")}</div>`;
+  };
+  paint("chips-one", "skills.one.items");
+  paint("chips-two", "skills.two.items");
 }
 
 function renderLogos() {
-  const grid = document.getElementById("logo-grid");
+  const grid = document.getElementById("tech-stack");
   if (!grid) return;
-  grid.innerHTML = LOGOS.map(
-    (logo) => `<figure class="logo-tile"><img src="${logo.src}" alt="${logo.name}"></figure>`
-  ).join("");
+  const columns = [[], [], [], []];
+  LOGOS.forEach((logo, index) => columns[index % 4].push(logo));
+  grid.innerHTML = columns
+    .map(
+      (column) => `<div class="tech-stack-column">${column
+        .map(
+          (logo) => `<div class="tech-stack-item"><img src="${logo.src}" alt="${logo.name}"><span class="tech-stack-label">${logo.name}</span></div>`
+        )
+        .join("")}</div>`
+    )
+    .join("");
 }
 
 function featuredProjects() {
@@ -89,16 +101,23 @@ function renderCarousel() {
   state.project = active;
   const current = items[active];
 
+  const slots = {
+    0: { x: "-50%", y: "-50%", s: 1, o: 1, z: 5 },
+    "-1": { x: "calc(-50% - 210px)", y: "-50%", s: 0.72, o: 0.85, z: 4 },
+    1: { x: "calc(-50% + 210px)", y: "-50%", s: 0.72, o: 0.85, z: 4 },
+    "-2": { x: "calc(-50% - 340px)", y: "-50%", s: 0.55, o: 0.3, z: 3 },
+    2: { x: "calc(-50% + 340px)", y: "-50%", s: 0.55, o: 0.3, z: 3 }
+  };
   stack.innerHTML = items
     .map((project, index) => {
       let offset = index - active;
       const half = items.length / 2;
       if (offset > half) offset -= items.length;
       if (offset < -half) offset += items.length;
-      const abs = Math.abs(offset);
-      const hidden = abs > 2;
-      return `<button class="album-card" type="button" data-index="${index}" style="--offset:${offset};--abs:${abs}" ${hidden ? "hidden" : ""} aria-label="${project.title[state.lang]}">
-        <img src="${project.image}" alt="${project.title[state.lang]}">
+      const slot = slots[offset] || { x: "-50%", y: "-50%", s: 0.5, o: 0, z: 1 };
+      const center = offset === 0 ? " work-album-item-center" : "";
+      return `<button class="work-album-item${center}" type="button" data-index="${index}" style="transform:translate(${slot.x}, ${slot.y}) scale(${slot.s});opacity:${slot.o};z-index:${slot.z}" aria-label="${project.title[state.lang]}">
+        <img class="work-album-img" src="${project.image}" alt="${project.title[state.lang]}">
       </button>`;
     })
     .join("");
@@ -146,27 +165,42 @@ function renderArchive() {
 function renderCredentials() {
   const list = document.getElementById("cert-list");
   if (!list) return;
+  const icon = `<span class="award-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"></path></svg></span>`;
   list.innerHTML = CERTS.map((cert) => {
-    const inner = `<span class="cred-mark" aria-hidden="true"></span><span><strong>${cert.title[state.lang]}</strong><small>${cert.meta[state.lang]}</small></span><span class="cred-arrow" aria-hidden="true">↗</span>`;
-    if (!cert.href) return `<div class="cred">${inner}</div>`;
-    return `<a class="cred" href="${cert.href}" target="_blank" rel="noopener noreferrer">${inner}</a>`;
+    const inner = `${icon}<span><span class="award-title">${cert.title[state.lang]}</span><span class="pf-award-meta">${cert.meta[state.lang]}</span></span>`;
+    if (!cert.href) return `<div class="award-item">${inner}</div>`;
+    return `<a class="award-item" href="${cert.href}" target="_blank" rel="noopener noreferrer">${inner}</a>`;
   }).join("");
 }
 
 function renderAchievements() {
   const list = document.getElementById("achieve-list");
-  if (!list) return;
-  list.innerHTML = ACHIEVEMENTS.map((item) => `
-    <article class="achieve">
-      <header>
-        <h3>${item.title[state.lang]}</h3>
-        <p>${item.subtitle[state.lang]}</p>
-      </header>
-      <p class="achieve-meta"><span>${item.date[state.lang]}</span><span>${item.place[state.lang]}</span></p>
-      <p>${item.body[state.lang]}</p>
-      ${item.link ? `<a class="text-link" href="${item.link.href}" target="_blank" rel="noopener noreferrer">${item.link[state.lang]} ↗</a>` : ""}
-    </article>
-  `).join("");
+  if (!list || document.body.dataset.page !== "home") return;
+  const stacks = [
+    ["assets/stacks/bm-3.jpg", "assets/stacks/bm-2.jpg", "assets/stacks/bm-1.jpg"],
+    ["assets/stacks/isutc-3.jpg", "assets/stacks/isutc-2.jpg", "assets/stacks/isutc-1.jpg"],
+    ["assets/stacks/web-3.jpg", "assets/stacks/web-2.jpg", "assets/stacks/web-1.jpg"]
+  ];
+  list.innerHTML = ACHIEVEMENTS.map((item, index) => {
+    const images = stacks[index] || [];
+    const front = images[images.length - 1];
+    const backs = images.slice(0, -1);
+    const fan = ["--tx:-26px;--ty:16px;--rot:-8deg;--sc:0.92", "--tx:20px;--ty:12px;--rot:6deg;--sc:0.95"];
+    const photos = `${backs.map((src, i) => `<img class="stacked-image" style="${fan[i] || ""}" src="${src}" alt="">`).join("")}<img class="stacked-image stacked-image-front" src="${front}" alt="">`;
+    return `<article class="experience-card${index === 1 ? " experience-card-reverse" : ""}">
+      <div class="experience-text">
+        <div class="experience-header">
+          <h3 class="experience-title">${item.title[state.lang]}</h3>
+          <span class="experience-date">${item.date[state.lang]}</span>
+        </div>
+        <p class="experience-subtitle">${item.subtitle[state.lang]}</p>
+        <p class="experience-org">${item.place[state.lang]}</p>
+        <p class="experience-desc">${item.body[state.lang]}</p>
+        ${item.link ? `<a class="experience-certificate" href="${item.link.href}" target="_blank" rel="noopener noreferrer">${item.link[state.lang]}</a>` : ""}
+      </div>
+      <div class="experience-image-stack">${photos}</div>
+    </article>`;
+  }).join("");
 }
 
 function initNav() {
@@ -219,7 +253,7 @@ function initCarouselControls() {
   const stack = document.getElementById("album");
   if (!stack) return;
   stack.addEventListener("click", (event) => {
-    const card = event.target.closest(".album-card");
+    const card = event.target.closest(".work-album-item");
     if (!card) return;
     const index = Number(card.dataset.index);
     if (index === state.project) return;
@@ -232,7 +266,7 @@ function initCarouselControls() {
   if (next) next.addEventListener("click", () => shiftProject(1));
 
   let timer = window.setInterval(() => shiftProject(1), 6500);
-  const album = document.querySelector(".album-wrap");
+  const album = document.querySelector(".work-album");
   if (!album) return;
   album.addEventListener("mouseenter", () => window.clearInterval(timer));
   album.addEventListener("mouseleave", () => {
@@ -256,3 +290,6 @@ applyLanguage();
 initNav();
 initForm();
 initCarouselControls();
+window.addEventListener("scroll", () => {
+  document.querySelector(".nav-bar")?.classList.toggle("scrolled", window.scrollY > 24);
+}, { passive: true });
